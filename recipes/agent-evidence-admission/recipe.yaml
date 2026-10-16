@@ -1,0 +1,56 @@
+schema_version: 1
+
+context:
+  name: agent-evidence-admission
+  version: "0.1.0"
+
+package:
+  name: ${{ name|lower }}
+  version: ${{ version }}
+
+source:
+  - url: https://pypi.org/packages/source/${{ name[0] }}/${{ name }}/agent_evidence_admission-${{ version }}.tar.gz
+    sha256: 2870ef6cbf34f4c7580549bc902d8c3eb3f5b5f64a93a28e2112ab57b1afcbb6
+  # The sdist does not include the license file, so take it from the same release tag.
+  - url: https://raw.githubusercontent.com/probityai/agent-evidence-admission/py-v${{ version }}/LICENSE
+    sha256: 760fe09e557f70707a032ba462fe522c487e6de90f65f7173a804b5351461bfb
+    file_name: LICENSE
+
+build:
+  number: 0
+  noarch: python
+  script: ${{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation
+  python:
+    entry_points:
+      - agent-evidence-admission = agent_evidence_admission.cli:main
+
+requirements:
+  host:
+    - python ${{ python_min }}.*
+    - hatchling >=1.27
+    - pip
+  run:
+    - python >=${{ python_min }}
+
+tests:
+  - python:
+      imports:
+        - agent_evidence_admission
+      pip_check: true
+      python_version:
+        - ${{ python_min }}.*
+        - "*"
+  - script:
+      - agent-evidence-admission --help
+
+about:
+  summary: Check that an artifact has the digest its compliance document, SBOM or attestation names
+  license: Apache-2.0
+  license_file: LICENSE
+  homepage: https://github.com/probityai/agent-evidence-admission
+  repository: https://github.com/probityai/agent-evidence-admission
+  documentation: https://github.com/probityai/agent-evidence-admission/blob/main/python/README.md
+
+extra:
+  recipe-maintainers:
+    - astrogilda

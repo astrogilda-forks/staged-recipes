@@ -1,0 +1,59 @@
+schema_version: 1
+
+context:
+  name: agent-evidence-observer
+  version: "0.0.1"
+  python_min: "3.12"
+
+package:
+  name: ${{ name|lower }}
+  version: ${{ version }}
+
+source:
+  url: https://pypi.org/packages/source/${{ name[0] }}/${{ name }}/agent_evidence_observer-${{ version }}.tar.gz
+  sha256: 144f17b69f0653c6bc218355a937e44f246e942b6821b689a8f948048ee55f0f
+
+build:
+  number: 0
+  noarch: python
+  script: ${{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation
+  python:
+    entry_points:
+      - agent-evidence-observer = probity_observer.cli:main
+      - agent-evidence-admit = probity_observer.admission:main
+      - agent-evidence-read-native = probity_observer.native_reader:main
+      - agent-evidence-read-atomic = probity_observer.atomic_reader:main
+      - agent-evidence-read-refund-handoff = probity_observer.refund_handoff:main
+
+requirements:
+  host:
+    - python ${{ python_min }}.*
+    - setuptools >=77.0.3
+    - pip
+  run:
+    - python >=${{ python_min }}
+    - cryptography >=46,<51
+    - rfc8785 ==0.1.4
+
+tests:
+  - python:
+      imports:
+        - probity_observer
+      pip_check: true
+      python_version:
+        - ${{ python_min }}.*
+        - "*"
+  - script:
+      - agent-evidence-observer --help
+
+about:
+  summary: Record brokered agent writes and check selected native reports offline
+  license: Apache-2.0
+  license_file: LICENSE
+  homepage: https://github.com/probityai/agent-evidence-observer
+  repository: https://github.com/probityai/agent-evidence-observer
+  documentation: https://github.com/probityai/agent-evidence-observer/blob/main/docs/INSTALLATION.md
+
+extra:
+  recipe-maintainers:
+    - astrogilda

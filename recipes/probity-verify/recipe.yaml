@@ -1,0 +1,57 @@
+schema_version: 1
+
+context:
+  name: probity-verify
+  version: "0.1.1"
+
+package:
+  name: ${{ name|lower }}
+  version: ${{ version }}
+
+source:
+  url: https://pypi.org/packages/source/${{ name[0] }}/${{ name }}/probity_verify-${{ version }}.tar.gz
+  sha256: ed745e2d5b07beaae5993399b1d551062c209efa5df8ae5961b39bf2d6ed3d16
+
+build:
+  number: 0
+  noarch: python
+  script: ${{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation
+  python:
+    entry_points:
+      - probity-verify = probity_verify.cli:main
+      - probity-bundle = probity_verify.bundle:main
+      - probity-index = probity_verify.index:main
+      - probity-a2a = probity_verify.a2a_server:main
+      - probity-a2a-client = probity_verify.a2a_client:main
+
+requirements:
+  host:
+    - python ${{ python_min }}.*
+    - setuptools >=77.0.3
+    - pip
+  run:
+    - python >=${{ python_min }}
+    - cryptography >=50.0.2,<51
+
+tests:
+  - python:
+      imports:
+        - probity_verify
+      pip_check: true
+      python_version:
+        - ${{ python_min }}.*
+        - "*"
+  - script:
+      - probity-verify --help
+
+about:
+  summary: Check claims against pinned evidence offline, with replayable decisions
+  license: Apache-2.0
+  license_file: LICENSE
+  homepage: https://github.com/probityai/probity-verify
+  repository: https://github.com/probityai/probity-verify
+  documentation: https://github.com/probityai/probity-verify/blob/main/docs/install.md
+
+extra:
+  recipe-maintainers:
+    - astrogilda

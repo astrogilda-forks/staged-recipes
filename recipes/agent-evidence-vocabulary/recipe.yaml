@@ -1,0 +1,49 @@
+schema_version: 1
+
+context:
+  name: agent-evidence-vocabulary
+  version: "0.5.0"
+
+package:
+  name: ${{ name|lower }}
+  version: ${{ version }}
+
+source:
+  url: https://pypi.org/packages/source/${{ name[0] }}/${{ name }}/agent_evidence_vocabulary-${{ version }}.tar.gz
+  sha256: dfdb0d011ac9e9b3c476c3d2173a36e7a6cfac664a0c14a9a5dd5da045975337
+
+build:
+  number: 0
+  noarch: python
+  script: ${{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation
+
+requirements:
+  host:
+    - python ${{ python_min }}.*
+    - setuptools >=77.0.3
+    - pip
+  run:
+    - python >=${{ python_min }}
+
+tests:
+  - python:
+      imports:
+        - agent_evidence_vocabulary
+      pip_check: true
+      python_version:
+        - ${{ python_min }}.*
+        - "*"
+
+about:
+  summary: Versioned terms for claims about agent execution evidence
+  license: Apache-2.0 AND CC0-1.0
+  license_file:
+    - LICENSE
+    - LICENSE-CC0
+  homepage: https://github.com/probityai/agent-evidence-vocabulary
+  repository: https://github.com/probityai/agent-evidence-vocabulary
+  documentation: https://github.com/probityai/agent-evidence-vocabulary/blob/main/docs/ABOUT.md
+
+extra:
+  recipe-maintainers:
+    - astrogilda
